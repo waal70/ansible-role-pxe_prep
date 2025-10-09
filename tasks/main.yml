@@ -9,7 +9,12 @@
   ansible.builtin.command: "dd if=/dev/zero of={{ root_partition[:-1] }} bs=446 count=1"
   changed_when: true
 
-- name: Async reboot # noqa: ignore-errors
-  ansible.builtin.command: shutdown -r now &
-  ignore_errors: true
-  changed_when: true
+- name: Block to mimic an asynchronous reboot
+  block:
+    - name: Async reboot with short wait
+      ansible.builtin.reboot:
+        reboot_timeout: 2
+  rescue:
+    - name: Inform the user
+      ansible.builtin.debug:
+        msg: "Ignore above error. Reboot command given, machine is now rebooting"
