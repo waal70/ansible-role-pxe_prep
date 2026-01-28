@@ -3,7 +3,7 @@
 
 - name: Set variable containing device name to zero
   ansible.builtin.set_fact:
-    root_partition: "{{ ansible_mounts | json_query('[?mount == `/` && fstype == `ext4`].device | [0]') }}"
+    root_partition: "{{ ansible_facts['mounts'] | json_query('[?mount == `/` && fstype == `ext4`].device | [0]') }}"
 
 - name: Overwrite MBR to force PXE boot
   ansible.builtin.command: "dd if=/dev/zero of={{ root_partition[:-1] }} bs=446 count=1"
